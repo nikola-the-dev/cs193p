@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
 //
-//    Struct can't inherits from something
+//    Basically struct can not inherits from something (as a class)
 //    : - in this context it means that ContentView act as like View
 //    but NOT inherits from View
 //
