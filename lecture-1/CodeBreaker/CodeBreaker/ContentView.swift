@@ -19,7 +19,7 @@ struct ContentView: View {
 //
     var body: some View {
 //        This is computable variable and it computes each time as it calls
-//        We can call as a function without args that returns only some variable
+//        It calls as a function without arguments that returns only some variable
         VStack(alignment: .leading, spacing: 10.0, content: greetings)
             .padding()
     }
