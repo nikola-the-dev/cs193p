@@ -2,37 +2,53 @@
 //  ContentView.swift
 //  CodeBreaker
 //
-//  Created by Nick Voloshyn on 08.09.2026.
+//  Created by Nick Voloshyn on 09.09.2026.
 //
 
 import SwiftUI
 
 struct ContentView: View {
-//
-//    Basically struct can not inherits from something (as a class)
-//    : - in this context it means that ContentView act as like View
-//    but NOT inherits from View
-//
-//    Protocol is a description of action
-//
-//    Almost everything in Swift are structures
-//
     var body: some View {
-//        This is computable variable and it computes each time as it calls
-//        It calls as a function without arguments that returns only some variable
-        VStack(alignment: .leading, spacing: 10.0, content: greetings)
-            .padding()
+        VStack {
+            pegs(colors: [.red, .green, .green, .yellow])
+            pegs(colors: [.blue, .red, .green, .yellow])
+            pegs(colors: [.green, .green, .green, .blue])
+        }
+        .padding()
+    }
+        
+//    Then we can call this variable in component just like this:
+//    VStack {
+//        pegs
+//        pegs
+//        pegs
+//    }
+    var pegs: some View {
+        HStack {
+            Circle().foregroundStyle(.red)
+//            foregroundStyle modifier is more powerfull than foregroundColor
+            Circle().foregroundStyle(.red)
+            Circle().foregroundStyle(.red)
+            Circle().foregroundStyle(.green)
+        }
     }
     
-    @ViewBuilder
-    func greetings() -> some View {
-        Image(systemName: "globe")
-            .imageScale(.large)
-            .foregroundStyle(.tint)
-        Text("Hello, world!")
-            .font(.largeTitle)
+    
+    func pegs(colors: [Color]) -> some View {
+        HStack {
+            ForEach(colors.indices, id: \.self) { i in
+//                id field in this call needed mostly for animation because system need to know
+//                which and how update every element, this field should be UNIQUE
+//                \.self in this case means that this concret object responds as id
+                RoundedRectangle(cornerRadius: 10.0)
+                    .aspectRatio(1/1, contentMode: .fit)
+                    .foregroundStyle(colors[i])
+            }
+            MatchMakers(matches: [.exact, .inexact, .nomatch, .exact])
+        }
     }
 }
+
 
 #Preview {
     ContentView()
