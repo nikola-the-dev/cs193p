@@ -1,1 +1,8 @@
-lecture-1/CodeBreaker/CodeBreaker.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserdatad
+*.xcuserstate
+
+DerivedData/
+Build/
+Products/
+
+.DS_Store
