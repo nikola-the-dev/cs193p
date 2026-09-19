@@ -33,7 +33,6 @@ struct MatchMakers: View {
     
     func matchMaker(peg: Int) -> some View {
         let exactCount: Int = matches.count(where: { m in m == .exact })
-//        or you can write closure in short manner like below:
         let foundCount: Int = matches.count { $0 != .nomatch }
         return Circle()
             .fill(exactCount > peg ? .primary : Color.clear)

@@ -12,10 +12,10 @@ struct CodeBreakerApp: App {
 //    This struct acts as an App
     var body: some Scene {
         WindowGroup {
-//            Displays ContentView file
+//            Displays CodeBreakerView file
 //            Actually here you can add multiple windows to display for mac os apps for example
 //            but for mobile apps there is only window
-            ContentView()
+            CodeBreakerView()
         }
     }
 }
