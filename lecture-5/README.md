@@ -40,3 +40,109 @@ There are 2 similar modifiers:
 * `.background(...)` - elem will be stacked on bottom of it's parent
 
 
+# Data Flow
+
+* `read-only` - it's `let`
+* data owned by a View - `@State` (always do these vars `private`)
+* data i/o - comes from outside and we can *might modify it*
+* data out - function which delivers data out of `View` (i.e. `ViewBuilders`)
+* data in function - `EnvironmentValues`
+* action function - like `Button`
+
+##`EnvironmentValues` 
+
+Struct that keeps vars like: 
+
+* dark/light mode
+* accessibility settings
+* whether app active or not
+* horizontal/vertical device spacing vavilable
+* locale
+* `UndoManager`
+* `font` / `minimumScaleFactor` / `dynamicTypeSize` / `lineSpacing`
+
+but these values do not access directly: `@Environment`
+
+```
+struct MyView: View {
+    @Environment(\.colorScheme) var colorScheme
+    var body: some View {
+      Image(systemName: "moon")
+        .foregroundStyle(colorScheme == .dark ? .yellow : .blue)
+    }
+}
+```
+
+There is also possible to add your own value to this struct:
+
+```
+extension EnvironmentValues {
+    @Entry var words = Words.shared
+}
+```
+
+Also there is possible to set some `View`'s environment by using modifier:
+
+```
+MyView()
+    .environment(\.colorScheme, .dark)
+``` 
+
+## Sharing data between views
+
+`@Binding` vars:
+
+```
+struct ViewA: View {
+    @State private var myData: Int = 42
+    var body: some View {
+        ViewB(foo: $myData)
+    }
+}
+struct ViewB: View {
+    @Binding var foo: Int
+}
+```
+
+`$myData` - **$** means binding to `myData`
+
+In `ViewB` we can change `foo` to `27` and it also changes in `ViewA`'s variable `myData` 
+
+You can pass binding value to another binding by using same `$`-sign
+
+Actually `@Binding` creates two vars (for example for `$foo` value):
+* `_foo` is a hidden one of `Binding<Type>` (you can access in an `init`)
+* `boundData` - computed value of variable's `Type` (`Int` / `String` / whatever)
+
+`@Binding` is **never** `private` because it's no sense if it will be `private`
+
+Also there is a possible to create `@Binding` with some constant value (especially for `#Preview`):
+
+```
+ViewB(foo: Binding<Int>.constant(5))
+```
+
+or shortance:
+
+```
+ViewB(foo: .constant(5))
+```
+
+## Give/Get something funcs
+
+By using closures:
+
+```
+struct MyView: View {
+    let giveSmth: (Int) -> Void
+    let getSmth: () -> Int
+}
+```
+
+`giveSmth`-like widely used for passing some `Button` hit for example
+
+`getSmth`-like is more rare
+
+## `@Observable`
+
+It's like `@Binding` but for classes, it has refernce semantics

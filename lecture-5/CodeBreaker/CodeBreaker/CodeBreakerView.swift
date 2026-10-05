@@ -43,7 +43,7 @@ struct CodeBreakerView: View {
             ForEach(code.pegs.indices, id: \.self) { i in
                 RoundedRectangle(cornerRadius: 10.0)
                     .overlay(content: {
-                        if code.pegs[i] == Code.missing {
+                        if code.pegs[i] == Code.missingPeg {
                             RoundedRectangle(cornerRadius: 10.0)
                                 .strokeBorder(Color.gray)
                         }
@@ -57,11 +57,14 @@ struct CodeBreakerView: View {
                         }
                     }
             }
-//            `.overlay` modifier allows add some content not using ZStack
-            MatchMakers(matches: code.matches)
+            Rectangle().foregroundColor(.clear).aspectRatio(1, contentMode: .fit)
                 .overlay {
-                    if code.kind == .guess {
-                        guessButton
+                    if let matches = code.matches {
+                        MatchMakers(matches: matches)
+                    } else {
+                        if code.kind == .guess {
+                            guessButton
+                        }
                     }
                 }
         }
