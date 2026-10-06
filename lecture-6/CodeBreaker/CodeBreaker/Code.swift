@@ -26,17 +26,33 @@ struct Code {
 //    static func ==(lhs:...
 //    Otherwise this func wolud be necessary
     enum Kind: Equatable {
-        case master,
+        case master(isHidden: Bool),
              guess,
              attempt([Match]),
              unknown
     }
     
     mutating func randomize(from pegChoices: [Peg]) {
-        for i in pegChoices.indices {
+        for i in pegs.indices {
             pegs[i] = pegChoices.randomElement() ?? Code.missingPeg
         }
     }
+    
+    
+    var isHidden: Bool {
+        switch kind {
+        case .master(let isHidden):
+            return isHidden
+        default:
+            return false
+        }
+    }
+    
+    
+    mutating func reset() {
+        pegs = Array(repeating: Code.missingPeg, count: 4)
+    }
+    
     
     var matches: [Match]? {
         switch kind {
@@ -50,7 +66,7 @@ struct Code {
     func match(against otherCode: Code) -> [Match] {
         var pegsToMach = otherCode.pegs
         
-        var backwardExactMatches = pegs.indices.reversed().map { i in
+        let backwardExactMatches = pegs.indices.reversed().map { i in
             if pegsToMach.count > i, pegsToMach[i] == pegs[i] {
                 pegsToMach.remove(at: i)
                 return Match.exact

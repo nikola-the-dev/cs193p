@@ -15,7 +15,7 @@ enum Match {
 
 struct MatchMakers: View {
     
-    var matches: [Match]
+    let matches: [Match]
     
     var body: some View {
         HStack {

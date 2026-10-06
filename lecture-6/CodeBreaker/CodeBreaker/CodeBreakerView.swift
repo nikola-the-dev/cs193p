@@ -12,16 +12,23 @@ struct CodeBreakerView: View {
 //    But it conflicts because all calls than need to mark mutating
 //    This why @State was added
 //    @State it macros that keeps pointer on the class _game
-    @State var game = CodeBreaker(pegChoices: [.brown, .yellow, .orange, .black])
+    @State private var game = CodeBreaker(pegChoices: [.brown, .yellow, .orange, .black, .green])
+    @State private var selection: Int = 0
     
     var body: some View {
         VStack {
             view(for: game.masterCode)
             ScrollView {
-                view(for: game.guess)
+                if !game.isOver {
+                    view(for: game.guess)
+                }
                 ForEach(game.attempts.indices.reversed(), id: \.self) { index in
                     view(for: game.attempts[index])
                 }
+            }
+            PegChooser(choices: game.pegChoices) { peg in
+                game.setGuessPeg(peg, at: selection)
+                selection = (selection + 1) % game.masterCode.pegs.count
             }
         }
         .padding()
@@ -32,31 +39,16 @@ struct CodeBreakerView: View {
         Button("Guess") {
             withAnimation {
                 game.attemptGuess()
+                selection = 0
             }
         }
-        .font(.system(size: 80.0))
-        .minimumScaleFactor(0.1)
+        .font(.system(size: GuessButton.maximuFontSize))
+        .minimumScaleFactor(GuessButton.scaleFactor)
     }
 
     func view(for code: Code) -> some View {
         HStack {
-            ForEach(code.pegs.indices, id: \.self) { i in
-                RoundedRectangle(cornerRadius: 10.0)
-                    .overlay(content: {
-                        if code.pegs[i] == Code.missingPeg {
-                            RoundedRectangle(cornerRadius: 10.0)
-                                .strokeBorder(Color.gray)
-                        }
-                    })
-                    .contentShape(Rectangle())
-                    .aspectRatio(1/1, contentMode: .fit)
-                    .foregroundStyle(code.pegs[i])
-                    .onTapGesture {
-                        if code.kind == .guess {
-                            game.changeGuessPeg(at: i)
-                        }
-                    }
-            }
+            CodeView(code: code, selection: $selection)
             Rectangle().foregroundColor(.clear).aspectRatio(1, contentMode: .fit)
                 .overlay {
                     if let matches = code.matches {
@@ -68,6 +60,24 @@ struct CodeBreakerView: View {
                     }
                 }
         }
+    }
+    
+    
+    struct GuessButton {
+        static let minimuFontSize: CGFloat = 8.0
+        static let maximuFontSize: CGFloat = 80.0
+        static let scaleFactor: CGFloat = minimuFontSize / maximuFontSize
+    }
+    
+    
+    
+    
+}
+
+
+extension Color {
+    static func gray(_ brightness: CGFloat) -> Color {
+        .init(hue: 140.0 / 360.0, saturation: 0.0, brightness: brightness)
     }
 }
 
