@@ -17,15 +17,19 @@ struct CodeBreakerView: View {
     
     var body: some View {
         VStack {
-            CodeView(code: game.masterCode, selection: $selection, ancillaryView: EmptyView())
+            CodeView(code: game.masterCode, selection: $selection, ancillaryView: { EmptyView() })
             ScrollView {
                 if !game.isOver {
-                    CodeView(code: game.guess, selection: $selection, ancillaryView: guessButton)
+                    CodeView(code: game.guess, selection: $selection) {
+                        guessButton
+                    }
                 }
                 ForEach(game.attempts.indices.reversed(), id: \.self) { index in
-                    CodeView(code: game.attempts[index],
-                             selection: $selection,
-                             ancillaryView: MatchMakers(matches: game.attempts[index].matches ?? []))
+                    CodeView(code: game.attempts[index], selection: $selection) {
+                        if let matches = game.attempts[index].matches {
+                            MatchMakers(matches: matches)
+                        }
+                    }
                 }
             }
             PegChooser(choices: game.pegChoices) { peg in
