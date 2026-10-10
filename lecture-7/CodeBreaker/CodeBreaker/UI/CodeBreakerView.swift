@@ -17,7 +17,8 @@ struct CodeBreakerView: View {
     
     var body: some View {
         VStack {
-            CodeView(code: game.masterCode, selection: $selection, ancillaryView: { EmptyView() })
+//            Because we add init with def values we can to get rid of some extra declarations
+            CodeView(code: game.masterCode)
             ScrollView {
                 if !game.isOver {
                     CodeView(code: game.guess, selection: $selection) {
@@ -25,7 +26,7 @@ struct CodeBreakerView: View {
                     }
                 }
                 ForEach(game.attempts.indices.reversed(), id: \.self) { index in
-                    CodeView(code: game.attempts[index], selection: $selection) {
+                    CodeView(code: game.attempts[index]) {
                         if let matches = game.attempts[index].matches {
                             MatchMakers(matches: matches)
                         }

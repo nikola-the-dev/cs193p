@@ -15,6 +15,20 @@ struct CodeView<AncillaryView>: View where AncillaryView: View {
     
     @ViewBuilder let ancillaryView: () -> AncillaryView
     
+//    This init allows as to set default values
+//    because @Binding variable above we cannot set with default values
+//    also we can set here default value for @ViewBuilder variable
+    init(code: Code,
+         selection: Binding<Int> = Binding<Int>.constant(-1),
+//         Don't forget to add this @ViewBuilder declaration
+         @ViewBuilder ancillaryView: @escaping () -> AncillaryView = { EmptyView() })
+    {
+        self.code = code
+//        It's because we sending Binding value so there is necessarry to append this value to its initial value that is marked with "_" symbol
+        self._selection = selection
+        self.ancillaryView = ancillaryView
+    }
+    
     
     var body: some View {
         HStack {
